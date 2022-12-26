@@ -12,7 +12,7 @@ const Logout = () => {
     // }
   return (
     <Button>
-        <button onClick={signOut}>LogOut</button>
+        <button onClick={() => auth.signOut()}>LogOut</button>
     </Button>
   )
 }
