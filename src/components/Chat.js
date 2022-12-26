@@ -1,15 +1,18 @@
-import React,{useState,useEffect,useRef} from 'react'
+import React, { useState, useEffect, useRef } from 'react';
+import Message from './Message';
+import SendMessage from './SendMessage';
+import { db } from '../firebase';
 import { query, collection, orderBy, onSnapshot } from 'firebase/firestore';
-import styled from 'styled-components'
-import {db} from '../firebase'
+
+const style = {
+  main: `flex flex-col p-[10px]`,
+};
 
 const Chat = () => {
+  const [messages, setMessages] = useState([]);
+  const scroll = useRef();
 
-  const [messages,setMessages]=useState([]);
-
-  const scroll=useRef();
-
-  useEffect(()=>{
+  useEffect(() => {
     const q = query(collection(db, 'messages'), orderBy('timestamp'));
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
       let messages = [];
@@ -19,18 +22,21 @@ const Chat = () => {
       setMessages(messages);
     });
     return () => unsubscribe();
-  },[])
-
+  }, []);
 
   return (
-    <Container>
+    <>
+      <main className={style.main}>
+        {messages &&
+          messages.map((message) => (
+            <Message key={message.id} message={message} />
+          ))}
+      </main>
+      {/* Send Message Compoenent */}
+      <SendMessage scroll={scroll} />
+      <span ref={scroll}></span>
+    </>
+  );
+};
 
-    </Container>
-  )
-}
-
-export default Chat
-
-const Container=styled.div`
-
-`
+export default Chat;
